@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dracula">
+<head>
+    <meta charset="UTF-8">
+    <title>Epic Task</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<h1 class="text-primary text-2xl font-bold p-4">Epic Task</h1>
+
+<main class="grid grid-cols-1 gap-4 p-4 place-items-center">
+    <form method="POST" action="/tasks/form"
+          class="w-full max-w-md bg-neutral text-neutral-content p-6 rounded-lg shadow-xl border border-base-100">
+
+        <h2 class="text-secondary font-bold mb-4 text-lg">Nova Tarefa</h2>
+
+        <fieldset class="fieldset mb-4">
+            <legend class="fieldset-legend">Título</legend>
+            <input name="title" type="text" class="input input-bordered w-full" placeholder="Título da tarefa" required />
+            <p class="label text-xs">Campo obrigatório</p>
+        </fieldset>
+
+        <fieldset class="fieldset mb-4">
+            <legend class="fieldset-legend">Descrição</legend>
+            <textarea name="description" class="textarea textarea-bordered w-full"
+                      placeholder="Descrição completa da tarefa" minlength="10" required></textarea>
+            <p class="label text-xs">Pelo menos 10 caracteres</p>
+        </fieldset>
+
+        <fieldset class="fieldset mb-4">
+            <legend class="fieldset-legend">Pontuação (score)</legend>
+            <input id="score-range" name="score" type="range" min="0" max="100" value="40"
+                   class="range range-primary" />
+            <p id="score-label" class="label text-xs">40 pts</p>
+        </fieldset>
+
+        <fieldset class="fieldset mb-4">
+            <legend class="fieldset-legend">Status (%)</legend>
+            <input id="status-range" name="status" type="range" min="0" max="100" value="0"
+                   class="range range-primary" />
+            <p id="status-label" class="label text-xs">0%</p>
+        </fieldset>
+
+        <div class="mt-6 flex justify-between">
+            <button class="btn btn-primary transition-transform transform hover:scale-105">Salvar</button>
+            <a href="/tasks" class="btn btn-secondary transition-transform transform hover:scale-105">Voltar</a>
+        </div>
+    </form>
+</main>
+
+<script>
+    document.querySelector("#score-range").addEventListener("input", e =>{
+        document.querySelector("#score-label").textContent = e.target.value + ' pts';
+    });
+    document.querySelector("#status-range").addEventListener("input", e =>{
+        document.querySelector("#status-label").textContent = e.target.value + '%';
+    });
+</script>
+
+</body>
+</html>
