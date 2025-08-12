@@ -15,7 +15,11 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public List<Task> getAllTasks(){
-        return  taskRepository.findAll();
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll();
+    }
+
+    public void save(Task task) {
+        taskRepository.save(task); // ✅ agora persiste
     }
 }
