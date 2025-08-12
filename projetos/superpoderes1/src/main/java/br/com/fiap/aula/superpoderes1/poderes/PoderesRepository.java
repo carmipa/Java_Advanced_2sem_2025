@@ -1,4 +1,9 @@
 package br.com.fiap.aula.superpoderes1.poderes;
 
-public class PoderesRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface PoderesRepository extends JpaRepository<Poderes, Long> {
+
+    List<Poderes> findAllByOrderByNivelInutilidadeDesc();
 }

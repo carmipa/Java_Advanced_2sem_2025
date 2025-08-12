@@ -1,10 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Piores Superpoderes</title>
+    <style>
+        body { background: #111; color: #fff; font-family: sans-serif; padding: 20px; }
+        h1 { color: #ff4d4d; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #222; }
+        th, td { padding: 12px; border: 1px solid #555; text-align: left; }
+        th { background: #333; }
+    </style>
 </head>
 <body>
-$END$
+<h1>Piores Superpoderes Já Criados</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th>Nível de Inutilidade</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="poder : ${poderes}">
+        <td th:text="${poder.nome}"></td>
+        <td th:text="${poder.descricao}"></td>
+        <td th:text="${poder.nivelInutilidade}"></td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>
