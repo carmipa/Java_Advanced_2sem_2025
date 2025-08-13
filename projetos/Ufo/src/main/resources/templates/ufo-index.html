@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dracula">
+<head>
+  <meta charset="UTF-8" />
+  <title>UFO Sightings</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<h1 class="text-primary text-2xl font-bold p-4">UFO Sightings</h1>
+
+<div th:if="${message}" role="alert" class="alert alert-success alert-soft m-4">
+  <span th:text="${message}"></span>
+</div>
+
+<div class="m-4">
+  <a href="/ufos/form" class="btn btn-primary">Novo Registro</a>
+</div>
+
+<main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 place-items-center">
+  <div class="w-full flex flex-col gap-4 items-center">
+
+    <div th:each="ufo : ${ufos}" class="card w-96 bg-neutral text-neutral-content shadow-xl border border-base-100">
+      <div class="badge badge-accent m-4" th:text="${#temporals.format(ufo.sightingDate, 'dd/MM/yyyy')}">00/00/0000</div>
+
+      <div class="card-body items-center text-center">
+        <h2 class="card-title" th:text="${ufo.location}">Localização</h2>
+        <p class="text-sm opacity-80">
+          <span class="font-semibold">Cor:</span> <span th:text="${ufo.color}">cor</span> •
+          <span class="font-semibold">Formato:</span> <span th:text="${ufo.shape}">formato</span>
+        </p>
+
+        <div class="radial-progress text-primary"
+             th:with="q=${ufo.quantityObjects}"
+             th:style="'--value:' + (${q} > 100 ? 100 : ${q}) + '; --size:5rem; --thickness:6px;'"
+             role="progressbar"
+             th:text="${q + ' objs'}">
+        </div>
+      </div>
+
+      <div class="justify-end card-actions m-4">
+        <a th:href="@{'/ufos/' + ${ufo.id} + '/edit'}" class="btn btn-secondary">Editar</a>
+        <form th:action="@{'/ufos/' + ${ufo.id} + '/delete'}" method="post">
+          <button class="btn btn-error">Apagar</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+</body>
+</html>

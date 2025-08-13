@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dracula">
+<head>
+  <meta charset="UTF-8">
+  <title>Novo Avistamento UFO</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<h1 class="text-primary text-2xl font-bold p-4">UFO Sightings</h1>
+
+<main class="grid grid-cols-1 gap-4 p-4 place-items-center">
+  <form th:action="@{/ufos/form}" method="post" th:object="${ufo}"
+        class="w-full max-w-md bg-neutral text-neutral-content p-6 rounded-lg shadow-xl border border-base-100">
+
+    <h2 class="text-secondary font-bold mb-4 text-lg" th:text="${#fields.hasErrors()} ? 'Corrija os campos' : (ufo.id == null ? 'Novo Avistamento' : 'Editar Avistamento')">Novo Avistamento</h2>
+
+    <input type="hidden" th:field="*{id}" />
+
+    <fieldset class="fieldset mb-4">
+      <legend class="fieldset-legend">Localização</legend>
+      <input th:field="*{location}" type="text" class="input input-bordered w-full"
+             placeholder="Cidade, estado/país" required />
+      <p class="label text-xs">Campo obrigatório</p>
+    </fieldset>
+
+    <fieldset class="fieldset mb-4">
+      <legend class="fieldset-legend">Data do Avistamento</legend>
+      <input th:field="*{sightingDate}" type="date" class="input input-bordered w-full" required />
+      <p class="label text-xs">Formato: dd/mm/aaaa (o input envia ISO-8601)</p>
+    </fieldset>
+
+    <fieldset class="fieldset mb-4">
+      <legend class="fieldset-legend">Cor</legend>
+      <input th:field="*{color}" type="text" class="input input-bordered w-full"
+             placeholder="Ex.: vermelho, azul, metálico" required />
+      <p class="label text-xs">Campo obrigatório</p>
+    </fieldset>
+
+    <fieldset class="fieldset mb-4">
+      <legend class="fieldset-legend">Formato (Enum)</legend>
+      <select th:field="*{shape}" class="select select-bordered w-full" required>
+        <option th:each="s : ${shapes}" th:value="${s}" th:text="${s}">DISCO</option>
+      </select>
+      <p class="label text-xs">Selecione um formato</p>
+    </fieldset>
+
+    <fieldset class="fieldset mb-4">
+      <legend class="fieldset-legend">Quantidade de Objetos</legend>
+      <input id="qty-range" th:field="*{quantityObjects}" type="range" min="0" max="100" value="1" class="range range-primary" />
+      <p id="qty-label" class="label text-xs" th:text="*{quantityObjects} + ' objeto(s)'}">1 objeto(s)</p>
+    </fieldset>
+
+    <div class="mt-6 flex justify-between">
+      <button class="btn btn-primary transition-transform transform hover:scale-105">Salvar</button>
+      <a href="/ufos" class="btn btn-secondary transition-transform transform hover:scale-105">Voltar</a>
+    </div>
+  </form>
+</main>
+
+<script>
+  const qtyRange = document.querySelector("#qty-range");
+  const qtyLabel = document.querySelector("#qty-label");
+  if (qtyRange && qtyLabel) {
+    const update = (v) => qtyLabel.textContent = v + ' objeto(s)';
+    update(qtyRange.value);
+    qtyRange.addEventListener("input", e => update(e.target.value));
+  }
+</script>
+
+</body>
+</html>
