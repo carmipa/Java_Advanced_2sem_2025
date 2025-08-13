@@ -1,6 +1,6 @@
 package br.com.fiap.ufo.model;
 
-public enum UfoEnun {
+public enum UfoShape {
     Disc,
     Sphere,
     Tringle,

@@ -1,74 +1,114 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dracula">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Novo Avistamento UFO</title>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${ufo.id} != null ? 'Editar avistamento' : 'Novo avistamento'">Novo avistamento</title>
+  <!-- DEV/CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="min-h-screen bg-base-200">
+<header class="navbar bg-base-100 shadow">
+  <div class="navbar-start">
+    <a th:href="@{/ufos}" class="btn btn-ghost normal-case text-xl">UFO Tracker</a>
+  </div>
+</header>
 
-<h1 class="text-primary text-2xl font-bold p-4">UFO Sightings</h1>
+<main class="container mx-auto p-4">
+  <div class="card bg-base-100 shadow-xl max-w-2xl mx-auto">
+    <div class="card-body">
+      <h2 class="card-title" th:text="${ufo.id} != null ? 'Editar avistamento' : 'Novo avistamento'">Novo avistamento</h2>
 
-<main class="grid grid-cols-1 gap-4 p-4 place-items-center">
-  <form th:action="@{/ufos/form}" method="post" th:object="${ufo}"
-        class="w-full max-w-md bg-neutral text-neutral-content p-6 rounded-lg shadow-xl border border-base-100">
+      <form th:action="${ufo.id} != null ? @{'/ufos/' + ${ufo.id}} : @{/ufos}"
+            th:object="${ufo}"
+            method="post"
+            class="grid grid-cols-1 gap-4">
 
-    <h2 class="text-secondary font-bold mb-4 text-lg" th:text="${#fields.hasErrors()} ? 'Corrija os campos' : (ufo.id == null ? 'Novo Avistamento' : 'Editar Avistamento')">Novo Avistamento</h2>
+        <!-- Em edição: emule PUT -->
+        <input type="hidden" name="_method" value="put" th:if="${ufo.id} != null"/>
 
-    <input type="hidden" th:field="*{id}" />
+        <!-- Local -->
+        <label class="form-control">
+          <span class="label"><span class="label-text">Local</span></span>
+          <input type="text" th:field="*{location}" placeholder="Cidade/Estado"
+                 class="input input-bordered" required/>
+          <span class="label text-error text-xs" th:if="${#fields.hasErrors('location')}"
+                th:errors="*{location}">Erro</span>
+        </label>
 
-    <fieldset class="fieldset mb-4">
-      <legend class="fieldset-legend">Localização</legend>
-      <input th:field="*{location}" type="text" class="input input-bordered w-full"
-             placeholder="Cidade, estado/país" required />
-      <p class="label text-xs">Campo obrigatório</p>
-    </fieldset>
+        <!-- Data do avistamento -->
+        <label class="form-control">
+          <span class="label"><span class="label-text">Data do avistamento</span></span>
+          <input type="date" th:field="*{sightingDate}" class="input input-bordered" required/>
+          <span class="label text-error text-xs" th:if="${#fields.hasErrors('sightingDate')}"
+                th:errors="*{sightingDate}">Erro</span>
+        </label>
 
-    <fieldset class="fieldset mb-4">
-      <legend class="fieldset-legend">Data do Avistamento</legend>
-      <input th:field="*{sightingDate}" type="date" class="input input-bordered w-full" required />
-      <p class="label text-xs">Formato: dd/mm/aaaa (o input envia ISO-8601)</p>
-    </fieldset>
+        <!-- Cor -->
+        <label class="form-control">
+          <span class="label"><span class="label-text">Cor</span></span>
+          <input type="text" th:field="*{color}" placeholder="Ex.: Verde, Vermelho"
+                 class="input input-bordered"/>
+          <span class="label text-error text-xs" th:if="${#fields.hasErrors('color')}"
+                th:errors="*{color}">Erro</span>
+        </label>
 
-    <fieldset class="fieldset mb-4">
-      <legend class="fieldset-legend">Cor</legend>
-      <input th:field="*{color}" type="text" class="input input-bordered w-full"
-             placeholder="Ex.: vermelho, azul, metálico" required />
-      <p class="label text-xs">Campo obrigatório</p>
-    </fieldset>
+        <!-- Forma (Enum) -->
+        <label class="form-control">
+          <span class="label"><span class="label-text">Forma</span></span>
+          <select th:field="*{shape}" class="select select-bordered" required>
+            <option th:each="s : ${T(br.com.fiap.ufo.model.UfoShape).values()}"
+                    th:value="${s}"
+                    th:text="${s}">DISCO</option>
+          </select>
+          <span class="label text-error text-xs" th:if="${#fields.hasErrors('shape')}"
+                th:errors="*{shape}">Erro</span>
+        </label>
 
-    <fieldset class="fieldset mb-4">
-      <legend class="fieldset-legend">Formato (Enum)</legend>
-      <select th:field="*{shape}" class="select select-bordered w-full" required>
-        <option th:each="s : ${shapes}" th:value="${s}" th:text="${s}">DISCO</option>
-      </select>
-      <p class="label text-xs">Selecione um formato</p>
-    </fieldset>
+        <!-- Quantidade de objetos -->
+        <label class="form-control">
+          <div class="flex items-center justify-between">
+            <span class="label-text">Quantidade de objetos</span>
+            <p id="qty-label" class="text-xs opacity-70"
+               th:text="(((*{quantityObjects}) != null ? *{quantityObjects} : 1)) + ' objeto(s)'">
+              1 objeto(s)
+            </p>
+          </div>
 
-    <fieldset class="fieldset mb-4">
-      <legend class="fieldset-legend">Quantidade de Objetos</legend>
-      <input id="qty-range" th:field="*{quantityObjects}" type="range" min="0" max="100" value="1" class="range range-primary" />
-      <p id="qty-label" class="label text-xs" th:text="*{quantityObjects} + ' objeto(s)'}">1 objeto(s)</p>
-    </fieldset>
+          <input id="quantityObjects"
+                 type="range" min="1" max="20" step="1"
+                 th:field="*{quantityObjects}"
+                 class="range"/>
 
-    <div class="mt-6 flex justify-between">
-      <button class="btn btn-primary transition-transform transform hover:scale-105">Salvar</button>
-      <a href="/ufos" class="btn btn-secondary transition-transform transform hover:scale-105">Voltar</a>
+          <div class="flex justify-between text-xs px-1 opacity-70">
+            <span>1</span><span>5</span><span>10</span><span>15</span><span>20</span>
+          </div>
+
+          <span class="label text-error text-xs" th:if="${#fields.hasErrors('quantityObjects')}"
+                th:errors="*{quantityObjects}">Erro</span>
+        </label>
+
+        <div class="card-actions justify-end pt-2">
+          <a th:href="@{/ufos}" class="btn btn-ghost">Cancelar</a>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
     </div>
-  </form>
+  </div>
 </main>
 
-<script>
-  const qtyRange = document.querySelector("#qty-range");
-  const qtyLabel = document.querySelector("#qty-label");
-  if (qtyRange && qtyLabel) {
-    const update = (v) => qtyLabel.textContent = v + ' objeto(s)';
-    update(qtyRange.value);
-    qtyRange.addEventListener("input", e => update(e.target.value));
-  }
-</script>
 
+<script>
+  (function () {
+    const input = document.getElementById('quantityObjects');
+    const label = document.getElementById('qty-label');
+    if (input && label) {
+      const update = () => label.textContent = input.value + ' objeto(s)';
+      input.addEventListener('input', update);
+      update(); // inicial
+    }
+  })();
+</script>
 </body>
 </html>

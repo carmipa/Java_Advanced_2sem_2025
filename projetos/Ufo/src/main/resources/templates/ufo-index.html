@@ -1,55 +1,69 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dracula">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <title>UFO Sightings</title>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Avistamentos de UFO</title>
+  <!-- DEV/CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="min-h-screen bg-base-200">
+<header class="navbar bg-base-100 shadow">
+  <div class="navbar-start">
+    <a th:href="@{/ufos}" class="btn btn-ghost normal-case text-xl">UFO Tracker</a>
+  </div>
+  <div class="navbar-end">
+    <a th:href="@{/ufos/new}" class="btn btn-primary">Novo registro</a>
+  </div>
+</header>
 
-<h1 class="text-primary text-2xl font-bold p-4">UFO Sightings</h1>
+<main class="container mx-auto p-4">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Lista de avistamentos</h2>
 
-<div th:if="${message}" role="alert" class="alert alert-success alert-soft m-4">
-  <span th:text="${message}"></span>
-</div>
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Local</th>
+            <th>Data</th>
+            <th>Cor</th>
+            <th>Forma</th>
+            <th>Qtd. Objetos</th>
+            <th class="text-right">Ações</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="u : ${ufos}">
+            <td th:text="${u.id}">1</td>
+            <td th:text="${u.location}">São Paulo</td>
+            <td th:text="${#temporals.format(u.sightingDate, 'dd/MM/yyyy')}">01/01/2025</td>
+            <td th:text="${u.color}">Verde</td>
+            <td th:text="${u.shape}">DISCO</td>
+            <td th:text="${u.quantityObjects}">1</td>
+            <td class="text-right space-x-2">
 
-<div class="m-4">
-  <a href="/ufos/form" class="btn btn-primary">Novo Registro</a>
-</div>
+              <form th:action="@{'/ufos/' + ${u.id}}" method="post" class="inline">
+                <input type="hidden" name="_method" value="delete"/>
 
-<main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 place-items-center">
-  <div class="w-full flex flex-col gap-4 items-center">
-
-    <div th:each="ufo : ${ufos}" class="card w-96 bg-neutral text-neutral-content shadow-xl border border-base-100">
-      <div class="badge badge-accent m-4" th:text="${#temporals.format(ufo.sightingDate, 'dd/MM/yyyy')}">00/00/0000</div>
-
-      <div class="card-body items-center text-center">
-        <h2 class="card-title" th:text="${ufo.location}">Localização</h2>
-        <p class="text-sm opacity-80">
-          <span class="font-semibold">Cor:</span> <span th:text="${ufo.color}">cor</span> •
-          <span class="font-semibold">Formato:</span> <span th:text="${ufo.shape}">formato</span>
-        </p>
-
-        <div class="radial-progress text-primary"
-             th:with="q=${ufo.quantityObjects}"
-             th:style="'--value:' + (${q} > 100 ? 100 : ${q}) + '; --size:5rem; --thickness:6px;'"
-             role="progressbar"
-             th:text="${q + ' objs'}">
-        </div>
+              </form>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(ufos)}">
+            <td colspan="7" class="text-center text-base-content/60">Nenhum registro encontrado.</td>
+          </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div class="justify-end card-actions m-4">
-        <a th:href="@{'/ufos/' + ${ufo.id} + '/edit'}" class="btn btn-secondary">Editar</a>
-        <form th:action="@{'/ufos/' + ${ufo.id} + '/delete'}" method="post">
-          <button class="btn btn-error">Apagar</button>
-        </form>
+      <div class="card-actions justify-end">
+        <a th:href="@{/ufos/new}" class="btn btn-primary">Novo registro</a>
       </div>
     </div>
-
   </div>
 </main>
-
 </body>
 </html>
